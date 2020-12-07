@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.6]
+        os: [ubuntu-latest]
         tox_env: [py36]
         galaxy_version: [dev,
                          release_20.09,
@@ -35,7 +35,16 @@ jobs:
                          release_18.05,
                          release_18.01,
                          release_17.09]
-
+        include:
+          - tox_env: py39
+            galaxy_version: dev
+          - tox_env: py38
+            galaxy_version: dev
+          - tox_env: py37
+            galaxy_version: dev
+          - os: macos-latest
+            tox_env: py36
+            galaxy_version: dev
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python for BioBlend
