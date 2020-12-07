@@ -2,7 +2,7 @@ on: [push, pull_request]
 name: tests
 jobs:
   test:
-    runs-on: {matrix.os}
+    runs-on: [macos-latest, ubuntu-latest]
     services:
       # Label used to access the service container
       postgres:
@@ -22,7 +22,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
         tox_env: [py36]
         galaxy_version: [dev,
                          release_20.09,
