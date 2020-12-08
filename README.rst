@@ -15,7 +15,7 @@
     :alt: Build Status
 
 
-BioBlend is a Python library for interacting with `Galaxy`_ and  `CloudMan`_
+BioBlend is a Python library for interacting with _ and  _
 APIs.
 
 BioBlend is supported and tested on:
@@ -24,7 +24,7 @@ BioBlend is supported and tested on:
 - Galaxy release_17.09 and later.
 
 Full docs are available at https://bioblend.readthedocs.io/ with a quick library
-overview also available in `ABOUT.rst <./ABOUT.rst>`_.
+overview also available in _.
 
 .. References/hyperlinks used above
 .. _CloudMan: https://galaxyproject.org/cloudman/

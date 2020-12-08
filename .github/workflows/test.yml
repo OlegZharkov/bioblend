@@ -45,15 +45,21 @@ jobs:
           - os: ubuntu-latest
             tox_env: py37
             galaxy_version: dev
-          - os: macos-latest
-            tox_env: py36
-            galaxy_version: dev
+         # - os: macos-latest
+         #    tox_env: py36
+         #    galaxy_version: dev
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python for BioBlend
         uses: actions/setup-python@v2
         with:
           python-version: 3.6
+
+      - name: Set up Python for BioBlend
+        uses: actions/setup-python@v2
+        with:
+          python-version: 2.7
+
       - name: install
         run: |
           python -m pip install 'tox>=1.8.0' 'virtualenv>=20.0.14'
@@ -64,9 +70,15 @@ jobs:
           PGPORT: 5432
           PGHOST: localhost
         run: |
-          sudo apt update && sudo apt install python2.7 virtualenv -y
           export GALAXY_VERSION=${{ matrix.galaxy_version }}
+
+          rm -rf /usr/local/var/postgres
+          initdb /usr/local/var/postgres
+          pg_ctl -D /usr/local/var/postgres start
+          createuser -s postgres
+
           createdb -U postgres galaxy-travis
+
           wget https://github.com/galaxyproject/galaxy/archive/${{ matrix.galaxy_version }}.tar.gz
           tar xvzf ${{ matrix.galaxy_version }}.tar.gz | tail
           cd galaxy-${{ matrix.galaxy_version }}
@@ -77,10 +89,10 @@ jobs:
           export DATABASE_CONNECTION=postgresql://postgres:@localhost/galaxy-travis
           eval "echo \"$(cat "${{ github.workspace }}/tests/template_galaxy.ini")\"" > "$GALAXY_CONFIG_FILE"
           if [ -f lib/galaxy/dependencies/conditional-requirements.txt ]; then
-             sed -i.bak -e 's/psycopg2==2.6.1/psycopg2==2.7.3.1/' lib/galaxy/dependencies/conditional-requirements.txt
+            sed -i.bak -e 's/psycopg2==2.6.1/psycopg2==2.7.3.1/' lib/galaxy/dependencies/conditional-requirements.txt
           fi
           export GALAXY_SKIP_CLIENT_BUILD=1
-          GALAXY_RUN_ALL=1 "${{ github.workspace }}/run_galaxy.sh" --daemon --wait
+          ${{ github.workspace }}/run_galaxy.sh
           export BIOBLEND_GALAXY_URL=http://localhost:8080
           cd ${{ github.workspace }}
           tox -e ${{ matrix.tox_env }}
